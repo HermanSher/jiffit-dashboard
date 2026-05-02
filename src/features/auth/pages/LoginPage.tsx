@@ -35,7 +35,6 @@ export const LoginPage = () => {
       const result = await loginWithApi({
         username,
         password,
-        deviceInfo: window.navigator.userAgent,
       })
 
       if (isCustomerUser(result.user)) {
