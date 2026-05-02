@@ -1,13 +1,14 @@
 import { LoaderCircle, ShieldAlert } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
-import { isCustomerUser } from '../../features/access/permissions'
+import { isCustomerUser, isSuperUser } from '../../features/access/permissions'
 import { bootstrapDashboardAccess } from '../../features/auth/auth.api'
 import { useAuthStore } from '../../features/auth/auth.store'
 
 export const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
   const currentUser = useAuthStore((state) => state.user)
+  const refreshToken = useAuthStore((state) => state.refreshToken)
   const setUser = useAuthStore((state) => state.setUser)
   const setAccessData = useAuthStore((state) => state.setAccessData)
   const logout = useAuthStore((state) => state.logout)
@@ -23,6 +24,11 @@ export const ProtectedRoute = () => {
     let isMounted = true
 
     const bootstrap = async () => {
+      if (currentUser && !refreshToken && isSuperUser(currentUser)) {
+        setAccessData([], [])
+        return
+      }
+
       setIsBootstrapping(true)
 
       try {
@@ -59,7 +65,7 @@ export const ProtectedRoute = () => {
     return () => {
       isMounted = false
     }
-  }, [currentUser, isAuthenticated, logout, setAccessData, setUser])
+  }, [currentUser, isAuthenticated, logout, refreshToken, setAccessData, setUser])
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location.pathname, message: blockedMessage }} />

@@ -49,6 +49,13 @@ export const LoginPage = () => {
       }
 
       setSession(accessToken, result.refreshToken ?? null, result.user)
+
+      if (result.token && !result.accessToken) {
+        setAccessData([], [])
+        navigate('/dashboard', { replace: true })
+        return
+      }
+
       const access = await bootstrapDashboardAccess(result.user)
 
       if (isCustomerUser(access.user)) {
