@@ -19,8 +19,9 @@ export interface LoginPayload {
 }
 
 export interface LoginResult {
-  accessToken: string
-  refreshToken: string
+  accessToken?: string
+  refreshToken?: string
+  token?: string
   user: AuthUser
 }
 

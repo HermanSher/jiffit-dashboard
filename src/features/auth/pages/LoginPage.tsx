@@ -42,8 +42,14 @@ export const LoginPage = () => {
         return
       }
 
-      setSession(result.accessToken, result.refreshToken, result.user)
-      const access = await bootstrapDashboardAccess()
+      const accessToken = result.accessToken ?? result.token
+
+      if (!accessToken) {
+        throw new Error('Login response did not include an access token.')
+      }
+
+      setSession(accessToken, result.refreshToken ?? null, result.user)
+      const access = await bootstrapDashboardAccess(result.user)
 
       if (isCustomerUser(access.user)) {
         logout()

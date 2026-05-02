@@ -1,5 +1,6 @@
 import { apiRequest } from '../../lib/api/client'
 import { fetchMyPermissions, fetchMyScreens } from '../access/access.api'
+import { isSuperUser } from '../access/permissions'
 import type { DashboardScreen, EffectivePermission } from '../access/access.types'
 import type { AuthTokenPair, AuthUser, LoginPayload, LoginResult, MeResult } from './auth.types'
 
@@ -30,7 +31,9 @@ export const logoutWithApi = async (): Promise<void> => {
 }
 
 export const getMeWithApi = async (): Promise<MeResult> => {
-  const response = await apiRequest<MeResult>('/api/auth/me')
+  const response = await apiRequest<MeResult>('/api/auth/me', {
+    toastErrors: false,
+  })
   return response.data
 }
 
@@ -48,20 +51,38 @@ export const normalizeMeUser = (profile: MeResult): AuthUser => ({
   employmentStatus: profile.employmentStatus,
 })
 
-export const bootstrapDashboardAccess = async (): Promise<{
+const isMissingNewAuthRoute = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message.toLowerCase() : ''
+
+  return message.includes('route not found') || message.includes('request failed with status 404')
+}
+
+export const bootstrapDashboardAccess = async (fallbackUser?: AuthUser): Promise<{
   user: AuthUser
   screens: DashboardScreen[]
   permissions: EffectivePermission[]
 }> => {
-  const [profile, screens, permissions] = await Promise.all([
-    getMeWithApi(),
-    fetchMyScreens(),
-    fetchMyPermissions(),
-  ])
+  try {
+    const [profile, screens, permissions] = await Promise.all([
+      getMeWithApi(),
+      fetchMyScreens(),
+      fetchMyPermissions(),
+    ])
 
-  return {
-    user: normalizeMeUser(profile),
-    screens,
-    permissions,
+    return {
+      user: normalizeMeUser(profile),
+      screens,
+      permissions,
+    }
+  } catch (error) {
+    if (fallbackUser && isSuperUser(fallbackUser) && isMissingNewAuthRoute(error)) {
+      return {
+        user: fallbackUser,
+        screens: [],
+        permissions: [],
+      }
+    }
+
+    throw error
   }
 }

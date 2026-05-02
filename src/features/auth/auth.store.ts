@@ -10,8 +10,8 @@ interface AuthState {
   screens: DashboardScreen[]
   permissions: EffectivePermission[]
   isAuthenticated: boolean
-  setTokens: (accessToken: string, refreshToken: string) => void
-  setSession: (accessToken: string, refreshToken: string, user: AuthUser) => void
+  setTokens: (accessToken: string, refreshToken: string | null) => void
+  setSession: (accessToken: string, refreshToken: string | null, user: AuthUser) => void
   setUser: (user: AuthUser) => void
   setAccessData: (screens: DashboardScreen[], permissions: EffectivePermission[]) => void
   logout: () => void

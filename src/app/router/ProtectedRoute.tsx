@@ -7,6 +7,7 @@ import { useAuthStore } from '../../features/auth/auth.store'
 
 export const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const currentUser = useAuthStore((state) => state.user)
   const setUser = useAuthStore((state) => state.setUser)
   const setAccessData = useAuthStore((state) => state.setAccessData)
   const logout = useAuthStore((state) => state.logout)
@@ -25,7 +26,7 @@ export const ProtectedRoute = () => {
       setIsBootstrapping(true)
 
       try {
-        const { user: profile, screens, permissions } = await bootstrapDashboardAccess()
+        const { user: profile, screens, permissions } = await bootstrapDashboardAccess(currentUser ?? undefined)
 
         if (!isMounted) {
           return
@@ -58,7 +59,7 @@ export const ProtectedRoute = () => {
     return () => {
       isMounted = false
     }
-  }, [isAuthenticated, logout, setAccessData, setUser])
+  }, [currentUser, isAuthenticated, logout, setAccessData, setUser])
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location.pathname, message: blockedMessage }} />
