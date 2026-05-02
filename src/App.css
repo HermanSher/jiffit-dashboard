@@ -147,9 +147,9 @@
 .form-error {
   margin: 2px 0 0;
   border-radius: 10px;
-  border: 1px solid color-mix(in srgb, #ef4444 44%, transparent);
-  background: color-mix(in srgb, #ef4444 14%, transparent);
-  color: #fecaca;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
   font-size: 0.82rem;
   padding: 8px 10px;
 }
@@ -195,9 +195,10 @@
   padding-inline: 12px;
 }
 
-.app-shell.sidebar-collapsed .sidebar-brand {
-  font-size: 1.25rem;
-  text-align: center;
+.app-shell.sidebar-collapsed .sidebar-brand-block {
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .app-shell.sidebar-collapsed .sidebar-subtitle,
@@ -237,10 +238,8 @@
   padding: 0 4px;
 }
 
-.sidebar-brand {
-  margin: 0;
-  font: 800 1.85rem/1 var(--font-display);
-  letter-spacing: 0.4px;
+.sidebar-brand-wrap {
+  min-width: 0;
 }
 
 .sidebar-subtitle {
@@ -250,10 +249,10 @@
 }
 
 .sidebar-nav {
-  margin-top: 30px;
+  margin-top: 34px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -272,10 +271,13 @@
 }
 
 .sidebar-link {
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 11px 13px;
   font-size: 0.9rem;
   font-weight: 700;
@@ -1179,9 +1181,9 @@
 
 .booking-status.cancelled,
 .booking-status.failed {
-  color: #dc2626 !important;
-  background: rgba(239, 68, 68, 0.16);
-  border-color: rgba(220, 38, 38, 0.34);
+  color: var(--danger-text) !important;
+  background: var(--danger-surface);
+  border-color: var(--danger-border);
 }
 
 .bookings-view-btn {
@@ -1231,9 +1233,9 @@
 }
 
 .bookings-status-btn.cancel {
-  border-color: rgba(220, 38, 38, 0.34);
-  background: rgba(239, 68, 68, 0.14);
-  color: #dc2626;
+  border-color: var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
 }
 
 html[data-theme='dark'] .booking-status.pending_payment,
@@ -1270,8 +1272,8 @@ html[data-theme='jiffit-classic-midnight'] .booking-status.cancelled,
 html[data-theme='jiffit-classic-midnight'] .booking-status.failed,
 html:not([data-theme]) .booking-status.cancelled,
 html:not([data-theme]) .booking-status.failed {
-  color: #fecaca !important;
-  border-color: rgba(239, 68, 68, 0.35);
+  color: var(--danger-text) !important;
+  border-color: var(--danger-border);
 }
 
 html[data-theme='dark'] .bookings-edit-btn,
@@ -1306,8 +1308,8 @@ html[data-theme='midnight'] .bookings-status-btn.cancel,
 html[data-theme='jiffit-classic-dark'] .bookings-status-btn.cancel,
 html[data-theme='jiffit-classic-midnight'] .bookings-status-btn.cancel,
 html:not([data-theme]) .bookings-status-btn.cancel {
-  color: #fecaca;
-  border-color: rgba(239, 68, 68, 0.36);
+  color: var(--danger-text);
+  border-color: var(--danger-border);
 }
 
 .bookings-status-btn:disabled {
@@ -1376,9 +1378,9 @@ html:not([data-theme]) .bookings-status-btn.cancel {
   grid-column: 1 / -1;
   margin: 0;
   border-radius: 10px;
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  background: rgba(220, 38, 38, 0.16);
-  color: #fecaca;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
   padding: 8px 10px;
   font-size: 0.8rem;
 }
@@ -1701,9 +1703,9 @@ html:not([data-theme]) .bookings-status-btn.cancel {
   grid-column: 1 / -1;
   margin: 0;
   border-radius: 10px;
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  background: rgba(220, 38, 38, 0.16);
-  color: #fecaca;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
   padding: 8px 10px;
   font-size: 0.8rem;
 }
@@ -1767,9 +1769,9 @@ html:not([data-theme]) .bookings-status-btn.cancel {
   place-items: center;
   flex: 0 0 auto;
   border-radius: 10px;
-  border: 1px solid rgba(239, 68, 68, 0.36);
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
   cursor: pointer;
 }
 
@@ -2257,8 +2259,8 @@ html:not([data-theme]) .bookings-status-btn.cancel {
 }
 
 .employees-status.inactive {
-  background: rgba(220, 38, 38, 0.2);
-  color: #fca5a5;
+  background: var(--danger-surface);
+  color: var(--danger-text);
 }
 
 .employees-action-btn {
@@ -2281,42 +2283,55 @@ html:not([data-theme]) .bookings-status-btn.cancel {
   display: grid;
   place-items: center;
   background: rgba(5, 6, 18, 0.52);
-  backdrop-filter: blur(4px);
-  padding: 14px;
+  backdrop-filter: blur(6px);
+  padding: 20px;
+  animation: employeesOverlayIn 0.22s ease both;
 }
 
 .employees-modal {
-  width: min(900px, 100%);
-  border-radius: 14px;
+  width: min(1040px, 100%);
+  max-height: min(88vh, 900px);
+  overflow: auto;
+  border-radius: 24px;
   border: 1px solid var(--card-border);
   background: var(--surface-elevated);
+  box-shadow: 0 34px 90px -42px rgba(0, 0, 0, 0.55);
+  animation: employeesModalSlideUp 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .employees-modal-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   border-bottom: 1px solid var(--border-soft);
-  padding: 10px 12px;
+  padding: 20px 22px 16px;
 }
 
 .employees-modal-header h3 {
   margin: 0;
-  font: 700 1rem/1.2 var(--font-display);
+  font: 800 1.28rem/1.2 var(--font-display);
   color: var(--text-primary);
 }
 
-.employees-icon-btn {
-  border: 0;
-  outline: 0;
-  background: transparent;
+.employees-modal-header p {
+  margin: 6px 0 0;
   color: var(--text-secondary);
-  cursor: pointer;
-  width: 28px;
-  height: 28px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.employees-icon-btn {
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
-  border-radius: 8px;
+  flex: 0 0 auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  outline: 0;
+  background: color-mix(in srgb, var(--surface-elevated) 84%, transparent);
+  color: var(--text-secondary);
+  cursor: pointer;
 }
 
 .employees-icon-btn:hover {
@@ -2324,20 +2339,47 @@ html:not([data-theme]) .bookings-status-btn.cancel {
 }
 
 .employees-form {
-  padding: 10px 12px 12px;
+  padding: 20px 22px 22px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 18px 16px;
+}
+
+.employees-form-section-title {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding-top: 4px;
+  color: color-mix(in srgb, var(--brand) 72%, var(--text-primary));
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.employees-form-field {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.employees-form-field > span {
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.employees-form-field-wide {
+  grid-column: span 2;
 }
 
 .employees-form-error {
   margin: 0;
-  border-radius: 8px;
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  background: rgba(220, 38, 38, 0.16);
-  color: #fecaca;
-  padding: 7px 8px;
-  font-size: 0.78rem;
+  border-radius: 14px;
+  border: 1px solid var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
+  padding: 11px 12px;
+  font-size: 0.82rem;
   grid-column: 1 / -1;
 }
 
@@ -2345,17 +2387,22 @@ html:not([data-theme]) .bookings-status-btn.cancel {
   grid-column: 1 / -1;
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-soft);
 }
 
 .employees-cancel-btn,
 .employees-submit-btn {
   border: 0;
   outline: 0;
-  border-radius: 9px;
-  padding: 8px 10px;
-  font-size: 0.8rem;
-  font-weight: 700;
+  border-radius: 12px;
+  padding: 10px 14px;
+  min-height: 42px;
+  font-size: 0.84rem;
+  font-weight: 800;
   cursor: pointer;
 }
 
@@ -2372,6 +2419,28 @@ html:not([data-theme]) .bookings-status-btn.cancel {
 .employees-submit-btn:disabled {
   opacity: 0.72;
   cursor: not-allowed;
+}
+
+@keyframes employeesOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes employeesModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sr-only {
@@ -2409,6 +2478,10 @@ html:not([data-theme]) .bookings-status-btn.cancel {
 
   .employees-form {
     grid-template-columns: 1fr;
+  }
+
+  .employees-form-field-wide {
+    grid-column: auto;
   }
 }
 
@@ -2477,9 +2550,26 @@ a {
   gap: 10px;
 }
 
-.sidebar-brand {
-  font-size: 2rem;
-  letter-spacing: -0.04em;
+.sidebar-brand-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sidebar-logo {
+  display: block;
+  width: auto;
+  object-fit: contain;
+}
+
+.sidebar-logo.expanded {
+  height: 56px;
+  max-width: 210px;
+}
+
+.sidebar-logo.collapsed {
+  height: 52px;
+  max-width: 52px;
 }
 
 .sidebar-collapse-btn,
@@ -2504,11 +2594,15 @@ a {
 
 .sidebar-nav-group {
   display: grid;
-  gap: 6px;
+  gap: 9px;
+}
+
+.sidebar-nav-group + .sidebar-nav-group {
+  margin-top: 8px;
 }
 
 .sidebar-nav-group > p {
-  margin: 14px 10px 4px;
+  margin: 10px 10px 2px;
   color: rgba(255, 255, 255, 0.58);
   font-size: 0.68rem;
   font-weight: 900;
@@ -2516,9 +2610,29 @@ a {
   text-transform: uppercase;
 }
 
-.app-shell.sidebar-collapsed .sidebar-nav-group > p,
-.app-shell.sidebar-collapsed .sidebar-collapse-btn {
+.app-shell.sidebar-collapsed .sidebar-nav-group > p {
   display: none;
+}
+
+.app-shell.sidebar-collapsed .sidebar-nav {
+  gap: 14px;
+}
+
+.app-shell.sidebar-collapsed .sidebar-nav-group {
+  gap: 10px;
+}
+
+.app-shell.sidebar-collapsed .sidebar-nav-group + .sidebar-nav-group {
+  margin-top: 10px;
+}
+
+.app-shell.sidebar-collapsed .sidebar-link {
+  min-height: 44px;
+  padding-inline: 0;
+}
+
+.app-shell.sidebar-collapsed .sidebar-brand-wrap {
+  align-items: center;
 }
 
 .content-shell {
@@ -2993,9 +3107,9 @@ a {
 }
 
 .status-badge.danger {
-  border-color: rgba(239, 68, 68, 0.34);
-  background: rgba(239, 68, 68, 0.13);
-  color: #ef4444;
+  border-color: var(--danger-border);
+  background: var(--danger-surface);
+  color: var(--danger-text);
 }
 
 .status-badge.neutral {
@@ -3350,10 +3464,10 @@ a {
 .resource-form-error {
   grid-column: 1 / -1;
   margin: 0;
-  border: 1px solid rgba(248, 113, 113, 0.4);
+  border: 1px solid var(--danger-border);
   border-radius: 12px;
-  background: rgba(220, 38, 38, 0.14);
-  color: #ef4444;
+  background: var(--danger-surface);
+  color: var(--danger-text);
   padding: 9px 11px;
   font-size: 0.82rem;
 }
@@ -3631,5 +3745,368 @@ a {
   .secondary-btn,
   .danger-btn {
     width: 100%;
+  }
+}
+
+/* Shared form polish: keep inputs, errors, and modal motion readable in every theme. */
+.form-error,
+.bookings-form-error,
+.masters-form-error,
+.employees-form-error,
+.resource-form-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  border: 1px solid var(--danger-border);
+  border-left: 4px solid color-mix(in srgb, var(--danger) 72%, var(--danger-text));
+  border-radius: 14px;
+  background: var(--danger-surface);
+  color: var(--danger-text);
+  box-shadow: 0 16px 34px -30px color-mix(in srgb, var(--danger) 42%, transparent);
+  padding: 12px 14px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.auth-ant-input.ant-input-affix-wrapper,
+.bookings-ant-input.ant-input-affix-wrapper,
+.bookings-ant-input.ant-input,
+.bookings-ant-textarea.ant-input,
+.bookings-ant-number.ant-input-number,
+.bookings-ant-picker.ant-picker,
+.masters-ant-input.ant-input,
+.masters-ant-textarea.ant-input,
+.masters-ant-number.ant-input-number,
+.masters-ant-picker.ant-picker,
+.resource-ant-input.ant-input,
+.resource-ant-textarea.ant-input,
+.resource-ant-number.ant-input-number,
+.resource-ant-picker.ant-picker,
+.employees-ant-range.ant-picker,
+.employees-filters input,
+.employees-form input,
+.search-input,
+.topbar-search {
+  border: 1px solid var(--input-border) !important;
+  background: var(--input-background) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 34%, transparent);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.bookings-ant-input.ant-input-affix-wrapper .ant-input,
+.auth-ant-input.ant-input-affix-wrapper .ant-input,
+.auth-ant-input.ant-input-affix-wrapper input,
+.bookings-ant-input.ant-input,
+.bookings-ant-textarea.ant-input,
+.bookings-ant-number.ant-input-number .ant-input-number-input,
+.bookings-ant-picker.ant-picker .ant-picker-input > input,
+.masters-ant-number.ant-input-number .ant-input-number-input,
+.masters-ant-picker.ant-picker .ant-picker-input > input,
+.resource-ant-number.ant-input-number .ant-input-number-input,
+.resource-ant-picker.ant-picker .ant-picker-input > input,
+.employees-ant-range.ant-picker .ant-picker-input > input,
+.search-input input,
+.topbar-search input {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.auth-ant-input.ant-input-affix-wrapper input::placeholder,
+.bookings-ant-input.ant-input::placeholder,
+.bookings-ant-textarea.ant-input::placeholder,
+.bookings-ant-picker.ant-picker .ant-picker-input > input::placeholder,
+.masters-ant-input.ant-input::placeholder,
+.masters-ant-textarea.ant-input::placeholder,
+.masters-ant-picker.ant-picker .ant-picker-input > input::placeholder,
+.resource-ant-input.ant-input::placeholder,
+.resource-ant-textarea.ant-input::placeholder,
+.resource-ant-picker.ant-picker .ant-picker-input > input::placeholder,
+.employees-filters input::placeholder,
+.employees-form input::placeholder,
+.employees-ant-range.ant-picker .ant-picker-input > input::placeholder,
+.search-input input::placeholder,
+.topbar-search input::placeholder {
+  color: color-mix(in srgb, var(--text-secondary) 78%, transparent) !important;
+}
+
+.auth-ant-input.ant-input-affix-wrapper-focused,
+.auth-ant-input.ant-input-affix-wrapper:focus,
+.auth-ant-input.ant-input-affix-wrapper:hover,
+.bookings-ant-select.ant-select-focused .ant-select-selector,
+.bookings-ant-select.ant-select-open .ant-select-selector,
+.bookings-ant-input.ant-input-affix-wrapper-focused,
+.bookings-ant-input.ant-input-affix-wrapper:focus,
+.bookings-ant-input.ant-input-affix-wrapper:hover,
+.bookings-ant-picker.ant-picker-focused,
+.masters-ant-select.ant-select-focused .ant-select-selector,
+.masters-ant-select.ant-select-open .ant-select-selector,
+.masters-ant-input.ant-input:focus,
+.masters-ant-textarea.ant-input:focus,
+.masters-ant-picker.ant-picker-focused,
+.employees-ant-select.ant-select-focused .ant-select-selector,
+.employees-ant-select.ant-select-open .ant-select-selector,
+.employees-ant-range.ant-picker-focused,
+.employees-filters input:focus,
+.employees-form input:focus,
+.resource-ant-input.ant-input:focus,
+.resource-ant-textarea.ant-input:focus,
+.resource-ant-picker.ant-picker-focused,
+.resource-ant-select.ant-select-focused .ant-select-selector,
+.resource-ant-select.ant-select-open .ant-select-selector,
+.search-input:focus-within,
+.topbar-search:focus-within {
+  border-color: var(--input-focus-border) !important;
+  box-shadow:
+    0 0 0 3px var(--input-focus-ring),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 32%, transparent) !important;
+}
+
+.bookings-ant-select .ant-select-selector,
+.masters-ant-select .ant-select-selector,
+.employees-ant-select .ant-select-selector,
+.resource-ant-select .ant-select-selector {
+  border: 1px solid var(--input-border) !important;
+  background: var(--input-background) !important;
+  color: var(--text-primary) !important;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 34%, transparent) !important;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.bookings-ant-select .ant-select-selection-item,
+.bookings-ant-select .ant-select-selection-placeholder,
+.bookings-ant-select .ant-select-arrow,
+.bookings-ant-select .ant-select-clear,
+.masters-ant-select .ant-select-selection-item,
+.masters-ant-select .ant-select-selection-placeholder,
+.masters-ant-select .ant-select-arrow,
+.masters-ant-select .ant-select-clear,
+.employees-ant-select .ant-select-selection-item,
+.employees-ant-select .ant-select-selection-placeholder,
+.employees-ant-select .ant-select-arrow,
+.employees-ant-select .ant-select-clear,
+.resource-ant-select .ant-select-selection-item,
+.resource-ant-select .ant-select-selection-placeholder,
+.resource-ant-select .ant-select-arrow,
+.resource-ant-select .ant-select-clear,
+.ant-picker-suffix,
+.ant-picker-clear {
+  color: var(--text-primary) !important;
+}
+
+.bookings-ant-select .ant-select-selection-placeholder,
+.masters-ant-select .ant-select-selection-placeholder,
+.employees-ant-select .ant-select-selection-placeholder,
+.resource-ant-select .ant-select-selection-placeholder {
+  color: color-mix(in srgb, var(--text-secondary) 78%, transparent) !important;
+}
+
+.employees-ant-dropdown.ant-select-dropdown,
+.bookings-ant-dropdown.ant-select-dropdown,
+.masters-ant-dropdown.ant-select-dropdown,
+.resource-ant-dropdown.ant-select-dropdown,
+.ant-picker-dropdown .ant-picker-panel-container {
+  border: 1px solid var(--card-border) !important;
+  background: color-mix(in srgb, var(--surface-solid) 94%, transparent) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 26px 58px -38px color-mix(in srgb, #000 58%, transparent) !important;
+}
+
+.employees-ant-dropdown .ant-select-item,
+.bookings-ant-dropdown .ant-select-item,
+.masters-ant-dropdown .ant-select-item,
+.resource-ant-dropdown .ant-select-item,
+.ant-picker-dropdown,
+.ant-picker-dropdown .ant-picker-cell,
+.ant-picker-dropdown .ant-picker-header,
+.ant-picker-dropdown .ant-picker-content th {
+  color: var(--text-primary) !important;
+}
+
+.employees-ant-dropdown .ant-select-item-option-active,
+.bookings-ant-dropdown .ant-select-item-option-active,
+.masters-ant-dropdown .ant-select-item-option-active,
+.resource-ant-dropdown .ant-select-item-option-active,
+.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner,
+.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  background: color-mix(in srgb, var(--brand) 16%, transparent) !important;
+  color: var(--text-primary) !important;
+}
+
+.modal-overlay,
+.bookings-modal-overlay,
+.employees-modal-overlay {
+  background: rgba(14, 10, 22, 0.44);
+  backdrop-filter: blur(8px);
+  animation: formBackdropIn 0.24s ease both;
+}
+
+.form-modal,
+.confirm-dialog,
+.bookings-modal,
+.employees-modal {
+  background: color-mix(in srgb, var(--surface-solid) 92%, transparent);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 34px 88px -46px color-mix(in srgb, #000 64%, transparent);
+  animation: formEmergeFromBottom 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bookings-modal-header,
+.employees-modal-header,
+.form-modal-header {
+  background: color-mix(in srgb, var(--surface-solid) 56%, transparent);
+}
+
+.employees-cancel-btn,
+.employees-submit-btn,
+.bookings-save-btn,
+.primary-btn,
+.secondary-btn,
+.danger-btn {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.employees-cancel-btn:hover,
+.employees-submit-btn:hover,
+.bookings-save-btn:hover,
+.primary-btn:hover,
+.secondary-btn:hover,
+.danger-btn:hover {
+  transform: translateY(-1px);
+}
+
+.employees-cancel-btn {
+  border: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--surface-solid) 72%, transparent);
+}
+
+.ant-modal-root .ant-modal-mask {
+  background: rgba(14, 10, 22, 0.44) !important;
+  backdrop-filter: blur(8px);
+  animation: formBackdropIn 0.24s ease both;
+}
+
+.ant-modal-root .ant-modal-wrap {
+  color: var(--text-primary);
+}
+
+.ant-modal-root .ant-modal {
+  animation: formEmergeFromBottom 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ant-modal-root .ant-modal-content {
+  border: 1px solid var(--card-border) !important;
+  border-radius: 22px !important;
+  background: color-mix(in srgb, var(--surface-solid) 94%, transparent) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 34px 88px -46px color-mix(in srgb, #000 64%, transparent) !important;
+}
+
+.ant-modal-root .ant-modal-confirm-title,
+.ant-modal-root .ant-modal-confirm-content,
+.ant-modal-root .ant-modal-body,
+.ant-modal-root .ant-modal-close {
+  color: var(--text-primary) !important;
+}
+
+.ant-modal-root .ant-modal-confirm-content {
+  color: var(--text-secondary) !important;
+}
+
+.ant-modal-root .ant-btn {
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.ant-modal-root .ant-btn-default {
+  border-color: var(--border-soft) !important;
+  background: color-mix(in srgb, var(--surface-solid) 76%, transparent) !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-modal-root .ant-btn-primary {
+  border-color: color-mix(in srgb, var(--brand) 48%, transparent) !important;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2)) !important;
+  color: #ffffff !important;
+}
+
+[data-sonner-toast] {
+  border: 1px solid var(--card-border) !important;
+  background: color-mix(in srgb, var(--surface-solid) 96%, transparent) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 22px 48px -34px color-mix(in srgb, #000 54%, transparent) !important;
+}
+
+[data-sonner-toast] [data-title],
+[data-sonner-toast] [data-description] {
+  color: inherit !important;
+}
+
+[data-sonner-toast][data-type='error'] {
+  border-color: var(--danger-border) !important;
+  background: var(--danger-surface) !important;
+  color: var(--danger-text) !important;
+}
+
+@keyframes formBackdropIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes formEmergeFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(42px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .bookings-modal-overlay,
+  .employees-modal-overlay,
+  .ant-modal-root .ant-modal-mask,
+  .ant-modal-root .ant-modal,
+  .form-modal,
+  .confirm-dialog,
+  .bookings-modal,
+  .employees-modal {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .form-error,
+  .bookings-form-error,
+  .masters-form-error,
+  .employees-form-error,
+  .resource-form-error {
+    font-size: 0.8rem;
+    padding: 10px 12px;
+  }
+
+  .bookings-modal-actions,
+  .employees-modal-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 }

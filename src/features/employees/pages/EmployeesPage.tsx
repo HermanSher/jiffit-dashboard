@@ -535,7 +535,10 @@ export const EmployeesPage = () => {
         <div className="employees-modal-overlay" role="presentation">
           <section className="employees-modal" role="dialog" aria-modal="true" aria-label="Add Employee">
             <div className="employees-modal-header">
-              <h3>Add Employee</h3>
+              <div>
+                <h3>Add Employee</h3>
+                <p>Create a new dashboard user with role, contact, and status details.</p>
+              </div>
               <button type="button" className="employees-icon-btn" onClick={closeCreateModal}>
                 <X size={15} />
               </button>
@@ -550,100 +553,145 @@ export const EmployeesPage = () => {
                 className="sr-only"
               />
 
-              <input
-                type="text"
-                name="employee_username"
-                autoComplete="off"
-                placeholder="Username *"
-                value={form.username}
-                onChange={(event) => setForm((state) => ({ ...state, username: event.target.value }))}
-              />
-              <input
-                type="password"
-                name="employee_password"
-                autoComplete="new-password"
-                placeholder="Password *"
-                value={form.password}
-                onChange={(event) => setForm((state) => ({ ...state, password: event.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="First Name"
-                value={form.firstName}
-                onChange={(event) => setForm((state) => ({ ...state, firstName: event.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="Middle Name"
-                value={form.middleName}
-                onChange={(event) => setForm((state) => ({ ...state, middleName: event.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="Last Name"
-                value={form.lastName}
-                onChange={(event) => setForm((state) => ({ ...state, lastName: event.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="Address"
-                value={form.address}
-                onChange={(event) => setForm((state) => ({ ...state, address: event.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="Mobile Number"
-                value={form.mobileNo}
-                onChange={(event) => setForm((state) => ({ ...state, mobileNo: event.target.value }))}
-              />
-              <input
-                type="text"
-                placeholder="Alternate Number"
-                value={form.alternateNumber}
-                onChange={(event) => setForm((state) => ({ ...state, alternateNumber: event.target.value }))}
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
-              />
+              <div className="employees-form-section-title">Account details</div>
 
-              <Select
-                className="employees-ant-select"
-                popupClassName="employees-ant-dropdown"
-                placeholder="Select Role *"
-                value={form.iRoleMasterId}
-                options={(rolesQuery.data ?? []).map((role) => ({
-                  value: role.iMasterId,
-                  label: `${role.sName} (P${role.precedence})`,
-                }))}
-                onChange={(value) => setForm((state) => ({ ...state, iRoleMasterId: value }))}
-                allowClear
-              />
-              <Select
-                className="employees-ant-select"
-                popupClassName="employees-ant-dropdown"
-                placeholder="Select User Type *"
-                value={form.iUserTypeMasterId}
-                options={(userTypesQuery.data ?? []).map((userType) => ({
-                  value: userType.iMasterId,
-                  label: userType.sName,
-                }))}
-                onChange={(value) => setForm((state) => ({ ...state, iUserTypeMasterId: value }))}
-                allowClear
-              />
-              <Select
-                className="employees-ant-select"
-                popupClassName="employees-ant-dropdown"
-                placeholder="Select Employee Status"
-                value={form.isActive}
-                options={[
-                  { value: true, label: 'Active' },
-                  { value: false, label: 'Inactive' },
-                ]}
-                onChange={(value) => setForm((state) => ({ ...state, isActive: value }))}
-              />
+              <label className="employees-form-field">
+                <span>Username *</span>
+                <input
+                  type="text"
+                  name="employee_username"
+                  autoComplete="off"
+                  placeholder="Enter username"
+                  value={form.username}
+                  onChange={(event) => setForm((state) => ({ ...state, username: event.target.value }))}
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>Password *</span>
+                <input
+                  type="password"
+                  name="employee_password"
+                  autoComplete="new-password"
+                  placeholder="Create password"
+                  value={form.password}
+                  onChange={(event) => setForm((state) => ({ ...state, password: event.target.value }))}
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>Email</span>
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={form.email}
+                  onChange={(event) => setForm((state) => ({ ...state, email: event.target.value }))}
+                />
+              </label>
+
+              <div className="employees-form-section-title">Personal details</div>
+
+              <label className="employees-form-field">
+                <span>First Name</span>
+                <input
+                  type="text"
+                  placeholder="Enter first name"
+                  value={form.firstName}
+                  onChange={(event) => setForm((state) => ({ ...state, firstName: event.target.value }))}
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>Middle Name</span>
+                <input
+                  type="text"
+                  placeholder="Enter middle name"
+                  value={form.middleName}
+                  onChange={(event) => setForm((state) => ({ ...state, middleName: event.target.value }))}
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>Last Name</span>
+                <input
+                  type="text"
+                  placeholder="Enter last name"
+                  value={form.lastName}
+                  onChange={(event) => setForm((state) => ({ ...state, lastName: event.target.value }))}
+                />
+              </label>
+
+              <label className="employees-form-field employees-form-field-wide">
+                <span>Address</span>
+                <input
+                  type="text"
+                  placeholder="Enter address"
+                  value={form.address}
+                  onChange={(event) => setForm((state) => ({ ...state, address: event.target.value }))}
+                />
+              </label>
+
+              <label className="employees-form-field">
+                <span>Mobile Number</span>
+                <input
+                  type="text"
+                  placeholder="Primary phone number"
+                  value={form.mobileNo}
+                  onChange={(event) => setForm((state) => ({ ...state, mobileNo: event.target.value }))}
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>Alternate Number</span>
+                <input
+                  type="text"
+                  placeholder="Secondary phone number"
+                  value={form.alternateNumber}
+                  onChange={(event) => setForm((state) => ({ ...state, alternateNumber: event.target.value }))}
+                />
+              </label>
+
+              <div className="employees-form-section-title">Access setup</div>
+
+              <label className="employees-form-field">
+                <span>Role *</span>
+                <Select
+                  className="employees-ant-select"
+                  popupClassName="employees-ant-dropdown"
+                  placeholder="Select role"
+                  value={form.iRoleMasterId}
+                  options={(rolesQuery.data ?? []).map((role) => ({
+                    value: role.iMasterId,
+                    label: `${role.sName} (P${role.precedence})`,
+                  }))}
+                  onChange={(value) => setForm((state) => ({ ...state, iRoleMasterId: value }))}
+                  allowClear
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>User Type *</span>
+                <Select
+                  className="employees-ant-select"
+                  popupClassName="employees-ant-dropdown"
+                  placeholder="Select user type"
+                  value={form.iUserTypeMasterId}
+                  options={(userTypesQuery.data ?? []).map((userType) => ({
+                    value: userType.iMasterId,
+                    label: userType.sName,
+                  }))}
+                  onChange={(value) => setForm((state) => ({ ...state, iUserTypeMasterId: value }))}
+                  allowClear
+                />
+              </label>
+              <label className="employees-form-field">
+                <span>Status</span>
+                <Select
+                  className="employees-ant-select"
+                  popupClassName="employees-ant-dropdown"
+                  placeholder="Select employee status"
+                  value={form.isActive}
+                  options={[
+                    { value: true, label: 'Active' },
+                    { value: false, label: 'Inactive' },
+                  ]}
+                  onChange={(value) => setForm((state) => ({ ...state, isActive: value }))}
+                />
+              </label>
 
               {formError ? <p className="employees-form-error">{formError}</p> : null}
 

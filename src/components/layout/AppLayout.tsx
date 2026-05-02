@@ -6,6 +6,7 @@ import {
   Moon,
   Palette,
   PanelLeftClose,
+  PanelLeftOpen,
   Search,
   ShieldCheck,
   Sparkles,
@@ -26,6 +27,9 @@ const themeIconMap: Record<DashboardTheme, typeof Sun> = {
   dark: Moon,
   classic: Palette,
 }
+
+const sidebarLogoExpanded = '/jiffit_png/Jiffit Logos_210323-12.png'
+const sidebarLogoCollapsed = '/jiffit_png/Jiffit Logos_210323-20.png'
 
 export const AppLayout = () => {
   const navigate = useNavigate()
@@ -85,21 +89,27 @@ export const AppLayout = () => {
   const displayName = user?.name || user?.username || 'User'
   const initials = displayName.slice(0, 1).toUpperCase()
   const ActiveThemeIcon = themeIconMap[activeTheme]
+  const SidebarToggleIcon = isSidebarCollapsed ? PanelLeftOpen : PanelLeftClose
 
   const renderSidebarContent = () => (
     <>
       <div className="sidebar-brand-block">
-        <div>
-          <p className="sidebar-brand">Jiffit</p>
-          <p className="sidebar-subtitle">Admin Control Center</p>
+        <div className="sidebar-brand-wrap">
+          <img
+            src={isSidebarCollapsed ? sidebarLogoCollapsed : sidebarLogoExpanded}
+            alt="Jiffit"
+            className={`sidebar-logo ${isSidebarCollapsed ? 'collapsed' : 'expanded'}`}
+          />
+          {!isSidebarCollapsed ? <p className="sidebar-subtitle">Admin Control Center</p> : null}
         </div>
         <button
           type="button"
           className="sidebar-collapse-btn"
           onClick={() => setIsSidebarCollapsed((state) => !state)}
           aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          <PanelLeftClose size={17} />
+          <SidebarToggleIcon size={17} />
         </button>
       </div>
 
