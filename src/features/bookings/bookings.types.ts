@@ -6,6 +6,7 @@ export type BookingStatus =
   | 'PAID'
   | 'ASSIGNMENT_PENDING'
   | 'ASSIGNED'
+  | 'ACCEPTED'
   | 'IN_PROGRESS'
   | 'COMPLETED'
   | 'CANCELLED'
@@ -102,6 +103,12 @@ export interface BookingRecord {
   customer: BookingCustomer | null
   service: BookingService | null
   slot: BookingSlot | null
+  assignments?: Array<{
+    iTransId: number
+    iHeroUserMasterId: number
+    status: string
+    hero?: BookingCustomer | null
+  }>
 }
 
 export interface CreateBookingPayload {

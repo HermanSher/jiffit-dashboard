@@ -1,6 +1,8 @@
 import { useAuthStore } from '../../features/auth/auth.store'
+import type { AuthTokenPair } from '../../features/auth/auth.types'
+import { toast } from 'sonner'
 
-const API_BASE_URL =
+export const API_BASE_URL =
   import.meta.env.VITE_API_URL?.replace(/\/$/, '') ?? 'http://localhost:3000'
 
 export interface ApiResponse<TData> {
@@ -11,6 +13,8 @@ export interface ApiResponse<TData> {
 
 interface RequestOptions extends RequestInit {
   auth?: boolean
+  skipRefresh?: boolean
+  toastErrors?: boolean
 }
 
 const parseResponse = async (response: Response): Promise<unknown> => {
@@ -27,26 +31,95 @@ const parseResponse = async (response: Response): Promise<unknown> => {
   }
 }
 
+let refreshPromise: Promise<AuthTokenPair | null> | null = null
+
+const requestFreshTokens = async (): Promise<AuthTokenPair | null> => {
+  const refreshToken = useAuthStore.getState().refreshToken
+
+  if (!refreshToken) {
+    return null
+  }
+
+  if (!refreshPromise) {
+    refreshPromise = fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    })
+      .then(async (response) => {
+        const payload = (await parseResponse(response)) as Partial<ApiResponse<AuthTokenPair>>
+
+        if (!response.ok || payload.result !== 1 || !payload.data) {
+          throw new Error(payload.message || 'Session expired. Please login again.')
+        }
+
+        useAuthStore.getState().setTokens(payload.data.accessToken, payload.data.refreshToken)
+        return payload.data
+      })
+      .catch(() => {
+        useAuthStore.getState().logout()
+        return null
+      })
+      .finally(() => {
+        refreshPromise = null
+      })
+  }
+
+  return refreshPromise
+}
+
+const buildHeaders = (headers: HeadersInit | undefined, body: BodyInit | null | undefined) => {
+  const accessToken = useAuthStore.getState().accessToken
+  const requestHeaders = new Headers(headers)
+
+  if (!requestHeaders.has('Content-Type') && body && !(body instanceof FormData)) {
+    requestHeaders.set('Content-Type', 'application/json')
+  }
+
+  if (accessToken) {
+    requestHeaders.set('Authorization', `Bearer ${accessToken}`)
+  }
+
+  return requestHeaders
+}
+
 export const apiRequest = async <TData>(
   path: string,
   options: RequestOptions = {},
 ): Promise<ApiResponse<TData>> => {
-  const { auth = false, headers, ...init } = options
-  const token = useAuthStore.getState().token
-  const requestHeaders = new Headers(headers)
+  const {
+    auth = true,
+    headers,
+    skipRefresh = false,
+    toastErrors = true,
+    ...init
+  } = options
 
-  if (!requestHeaders.has('Content-Type') && init.body && !(init.body instanceof FormData)) {
-    requestHeaders.set('Content-Type', 'application/json')
+  const send = () =>
+    fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      headers: (() => {
+        const requestHeaders = buildHeaders(headers, init.body)
+
+        if (!auth) {
+          requestHeaders.delete('Authorization')
+        }
+
+        return requestHeaders
+      })(),
+    })
+
+  let response = await send()
+
+  if (auth && response.status === 401 && !skipRefresh) {
+    const tokens = await requestFreshTokens()
+
+    if (tokens) {
+      response = await send()
+    }
   }
-
-  if (auth && token) {
-    requestHeaders.set('Authorization', `Bearer ${token}`)
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: requestHeaders,
-  })
 
   const payload = (await parseResponse(response)) as Partial<ApiResponse<TData>>
 
@@ -54,10 +127,18 @@ export const apiRequest = async <TData>(
     const message =
       typeof payload.message === 'string' && payload.message.trim().length > 0
         ? payload.message
-        : `Request failed with status ${response.status}`
+      : `Request failed with status ${response.status}`
+
+    if (toastErrors) {
+      toast.error(message)
+    }
 
     throw new Error(message)
   }
 
-  return payload as ApiResponse<TData>
+  return {
+    result: payload.result ?? 1,
+    message: payload.message ?? '',
+    data: payload.data as TData,
+  }
 }

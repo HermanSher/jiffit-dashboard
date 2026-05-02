@@ -3,6 +3,7 @@ import { DatePicker, Input, InputNumber, Modal, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
 import { Database, Plus, RefreshCw, Save, Trash2 } from 'lucide-react'
 import { useMemo, useState, type FormEvent } from 'react'
+import { usePermissionHelpers } from '../../access/permissions'
 import { createMasterRecord, deleteMasterRecord, fetchMasterRecords } from '../masters.api'
 import { masterConfigs } from '../masters.config'
 import type { MasterConfig, MasterFieldConfig, MasterRecord } from '../masters.types'
@@ -89,11 +90,31 @@ const formatRecordMeta = (record: MasterRecord): string => {
   return `#${id} - ${active}`
 }
 
+const getPermissionBase = (key: string): string => {
+  if (key === 'roles') {
+    return 'ROLES'
+  }
+
+  if (key === 'user-types') {
+    return 'USER_TYPES'
+  }
+
+  if (key.includes('user') || key.includes('profile')) {
+    return 'USERS'
+  }
+
+  return 'SERVICES'
+}
+
 export const MastersPage = () => {
   const [modal, modalContextHolder] = Modal.useModal()
   const queryClient = useQueryClient()
+  const permissions = usePermissionHelpers()
   const [activeKey, setActiveKey] = useState(masterConfigs[0].key)
   const activeConfig = masterConfigs.find((config) => config.key === activeKey) ?? masterConfigs[0]
+  const permissionBase = getPermissionBase(activeConfig.key)
+  const canCreateActive = permissions.canCreate(permissionBase)
+  const canDeleteActive = permissions.canDelete(permissionBase)
   const [form, setForm] = useState<Record<string, unknown>>(buildInitialForm(activeConfig))
   const [formError, setFormError] = useState('')
 
@@ -256,10 +277,12 @@ export const MastersPage = () => {
     }
 
     if (field.type === 'boolean') {
+      const checked = value === true
+
       return (
         <div className="masters-switch-row">
-          <Switch checked={Boolean(value)} onChange={(checked) => updateField(field.name, checked)} />
-          <span>{Boolean(value) ? 'Yes' : 'No'}</span>
+          <Switch checked={checked} onChange={(nextChecked) => updateField(field.name, nextChecked)} />
+          <span>{checked ? 'Yes' : 'No'}</span>
         </div>
       )
     }
@@ -299,7 +322,7 @@ export const MastersPage = () => {
           value={value === undefined ? undefined : value}
           options={options}
           onChange={(nextValue) => updateField(field.name, nextValue)}
-          loading={Boolean(field.optionSource) && sourceQueries.isLoading}
+          loading={field.optionSource ? sourceQueries.isLoading : false}
           showSearch
           optionFilterProp="label"
           allowClear={field.allowEmpty || !field.required}
@@ -391,10 +414,12 @@ export const MastersPage = () => {
                 >
                   Reset
                 </button>
-                <button type="submit" className="employees-submit-btn" disabled={createMutation.isPending}>
-                  <Save size={14} />
-                  {createMutation.isPending ? 'Saving...' : `Create ${activeConfig.title}`}
-                </button>
+                {canCreateActive ? (
+                  <button type="submit" className="employees-submit-btn" disabled={createMutation.isPending}>
+                    <Save size={14} />
+                    {createMutation.isPending ? 'Saving...' : `Create ${activeConfig.title}`}
+                  </button>
+                ) : null}
               </div>
             </form>
           </div>
@@ -422,15 +447,17 @@ export const MastersPage = () => {
                       <strong>{getRecordLabel(record)}</strong>
                       <span>{formatRecordMeta(record)}</span>
                     </div>
-                    <button
-                      type="button"
-                      className="masters-delete-btn"
-                      onClick={() => confirmDeleteRecord(record)}
-                      disabled={deleteMutation.isPending}
-                      aria-label={`Delete ${getRecordLabel(record)}`}
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                    {canDeleteActive ? (
+                      <button
+                        type="button"
+                        className="masters-delete-btn"
+                        onClick={() => confirmDeleteRecord(record)}
+                        disabled={deleteMutation.isPending}
+                        aria-label={`Delete ${getRecordLabel(record)}`}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    ) : null}
                   </article>
                 ))
               )}

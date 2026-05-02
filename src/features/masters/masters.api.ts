@@ -34,3 +34,16 @@ export const deleteMasterRecord = async (
 
   return response.data
 }
+
+export const updateMasterRecord = async (
+  endpoint: string,
+  id: number | string,
+  payload: Record<string, unknown>,
+): Promise<MasterRecord> => {
+  const response = await apiRequest<MasterRecord>(`${endpoint}/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+
+  return response.data
+}

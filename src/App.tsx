@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Toaster } from 'sonner'
 import { QueryProvider } from './app/providers/QueryProvider'
 import { AppRouter } from './app/router/AppRouter'
 import { useThemeStore } from './features/theme/theme.store'
@@ -14,6 +15,7 @@ function App() {
   return (
     <QueryProvider>
       <AppRouter />
+      <Toaster position="top-right" richColors closeButton />
     </QueryProvider>
   )
 }

@@ -1,19 +1,26 @@
 import { Input } from 'antd'
-import { LoaderCircle, Lock, LogIn, Sparkles, UserRound } from 'lucide-react'
+import { LoaderCircle, Lock, LogIn, ShieldCheck, Sparkles, UserRound } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { loginWithApi } from '../auth.api'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { isCustomerUser } from '../../access/permissions'
+import { bootstrapDashboardAccess, loginWithApi } from '../auth.api'
 import { useAuthStore } from '../auth.store'
 
 export const LoginPage = () => {
   const navigate = useNavigate()
-  const authLogin = useAuthStore((state) => state.login)
+  const location = useLocation()
+  const setSession = useAuthStore((state) => state.setSession)
+  const setUser = useAuthStore((state) => state.setUser)
+  const setAccessData = useAuthStore((state) => state.setAccessData)
+  const logout = useAuthStore((state) => state.logout)
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(
+    (location.state as { message?: string } | null)?.message ?? '',
+  )
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />
@@ -25,10 +32,31 @@ export const LoginPage = () => {
     setIsSubmitting(true)
 
     try {
-      const result = await loginWithApi({ username, password })
-      authLogin(result.token, result.user)
+      const result = await loginWithApi({
+        username,
+        password,
+        deviceInfo: window.navigator.userAgent,
+      })
+
+      if (isCustomerUser(result.user)) {
+        setErrorMessage('Customer accounts cannot access the dashboard.')
+        return
+      }
+
+      setSession(result.accessToken, result.refreshToken, result.user)
+      const access = await bootstrapDashboardAccess()
+
+      if (isCustomerUser(access.user)) {
+        logout()
+        setErrorMessage('Customer accounts cannot access the dashboard.')
+        return
+      }
+
+      setUser(access.user)
+      setAccessData(access.screens, access.permissions)
       navigate('/dashboard', { replace: true })
     } catch (error) {
+      logout()
       setErrorMessage(error instanceof Error ? error.message : 'Unable to login. Try again.')
     } finally {
       setIsSubmitting(false)
@@ -40,8 +68,8 @@ export const LoginPage = () => {
       <section className="auth-card">
         <div className="brand-line">
           <div>
-            <p className="brand">jiffit</p>
-            <p className="brand-hint">Dashboard login</p>
+            <p className="brand">Jiffit</p>
+            <p className="brand-hint">Secure admin workspace</p>
           </div>
           <div className="brand-pill">
             <Sparkles size={16} />
@@ -49,7 +77,14 @@ export const LoginPage = () => {
         </div>
 
         <h1 className="auth-title">Welcome back</h1>
-        <p className="auth-description">Sign in with your username and password.</p>
+        <p className="auth-description">
+          Sign in to load your role, screens, and dashboard permissions.
+        </p>
+
+        <div className="auth-security-note">
+          <ShieldCheck size={15} />
+          JWT access token, refresh session, and RBAC checks are enabled.
+        </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>

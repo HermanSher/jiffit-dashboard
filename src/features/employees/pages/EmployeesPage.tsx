@@ -3,6 +3,7 @@ import { DatePicker, Modal, Select, Tag, type SelectProps } from 'antd'
 import dayjs from 'dayjs'
 import { Plus, SquarePen, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent, type MouseEvent } from 'react'
+import { usePermissionHelpers } from '../../access/permissions'
 import { useAuthStore } from '../../auth/auth.store'
 import {
   createEmployee,
@@ -93,6 +94,7 @@ export const EmployeesPage = () => {
   const [modal, modalContextHolder] = Modal.useModal()
   const queryClient = useQueryClient()
   const currentUser = useAuthStore((state) => state.user)
+  const permissions = usePermissionHelpers()
 
   const [selectedUsernames, setSelectedUsernames] = useState<string[]>([])
   const [selectedRoleCodes, setSelectedRoleCodes] = useState<string[]>([])
@@ -142,7 +144,7 @@ export const EmployeesPage = () => {
     },
   })
 
-  const allEmployees = employeesQuery.data ?? []
+  const allEmployees = useMemo(() => employeesQuery.data ?? [], [employeesQuery.data])
 
   const filteredEmployees = useMemo(() => {
     return allEmployees.filter((employee) => {
@@ -168,6 +170,9 @@ export const EmployeesPage = () => {
     (employee) => employee.isActive && employee.employmentStatus === 'ACTIVE',
   ).length
   const inactiveEmployees = allEmployees.length - activeEmployees
+  const canCreateUsers = permissions.canCreate('USERS')
+  const canUpdateUsers = permissions.canUpdate('USERS')
+  const canDeleteUsers = permissions.canDelete('USERS')
 
   const usernameOptions = useMemo(
     () =>
@@ -344,19 +349,23 @@ export const EmployeesPage = () => {
         <div className="employees-panel-header">
           <h2>Employee Management</h2>
           <div className="employees-panel-actions">
-            <button
-              type="button"
-              className="employees-delete-btn"
-              onClick={handleDeleteSelected}
-              disabled={selectedEmployeeIds.length === 0 || deleteSelectedMutation.isPending}
-            >
-              <Trash2 size={15} />
-              {deleteSelectedMutation.isPending ? 'Deleting...' : 'Delete Selected'}
-            </button>
-            <button type="button" className="employees-add-btn" onClick={openCreateModal}>
-              <Plus size={15} />
-              Add Employee
-            </button>
+            {canDeleteUsers ? (
+              <button
+                type="button"
+                className="employees-delete-btn"
+                onClick={handleDeleteSelected}
+                disabled={selectedEmployeeIds.length === 0 || deleteSelectedMutation.isPending}
+              >
+                <Trash2 size={15} />
+                {deleteSelectedMutation.isPending ? 'Deleting...' : 'Delete Selected'}
+              </button>
+            ) : null}
+            {canCreateUsers ? (
+              <button type="button" className="employees-add-btn" onClick={openCreateModal}>
+                <Plus size={15} />
+                Add Employee
+              </button>
+            ) : null}
           </div>
         </div>
 
@@ -429,7 +438,7 @@ export const EmployeesPage = () => {
                   <input
                     type="checkbox"
                     checked={isAllVisibleSelected}
-                    disabled={visibleEmployeeIds.length === 0}
+                    disabled={visibleEmployeeIds.length === 0 || !canDeleteUsers}
                     onChange={(event) => toggleAllVisible(event.target.checked)}
                     aria-label="Select all employees"
                   />
@@ -475,7 +484,7 @@ export const EmployeesPage = () => {
                         <input
                           type="checkbox"
                           checked={selectedEmployeeIds.includes(employee.id)}
-                          disabled={isCurrentUser}
+                          disabled={isCurrentUser || !canDeleteUsers}
                           onChange={(event) => toggleOne(employee.id, event.target.checked)}
                           aria-label={
                             isCurrentUser
@@ -505,9 +514,13 @@ export const EmployeesPage = () => {
                       <td>{formatDate(employee.createdAt)}</td>
                       <td>{formatDate(employee.updatedAt)}</td>
                       <td>
-                        <button type="button" className="employees-action-btn" aria-label="Edit employee">
-                          <SquarePen size={14} />
-                        </button>
+                        {canUpdateUsers ? (
+                          <button type="button" className="employees-action-btn" aria-label="Edit employee">
+                            <SquarePen size={14} />
+                          </button>
+                        ) : (
+                          '-'
+                        )}
                       </td>
                     </tr>
                   )

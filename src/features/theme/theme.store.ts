@@ -1,13 +1,7 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-export type DashboardTheme =
-  | 'default'
-  | 'dark'
-  | 'midnight'
-  | 'jiffit-classic-dark'
-  | 'jiffit-classic-light'
-  | 'jiffit-classic-midnight'
+export type DashboardTheme = 'light' | 'dark' | 'classic'
 
 interface ThemeOption {
   value: DashboardTheme
@@ -22,61 +16,42 @@ interface ThemeState {
 
 type LegacyTheme =
   | DashboardTheme
-  | 'light'
+  | 'default'
+  | 'midnight'
+  | 'jiffit-classic-dark'
+  | 'jiffit-classic-light'
+  | 'jiffit-classic-midnight'
   | null
   | undefined
 
 const normalizeTheme = (value: LegacyTheme): DashboardTheme => {
-  if (value === 'default') {
-    return 'default'
+  if (value === 'light' || value === 'default' || value === 'jiffit-classic-light') {
+    return 'light'
   }
 
-  if (value === 'dark') {
-    return 'dark'
-  }
-
-  if (value === 'midnight') {
-    return 'midnight'
-  }
-
-  if (value === 'jiffit-classic-dark') {
-    return 'jiffit-classic-dark'
-  }
-
-  if (value === 'jiffit-classic-light') {
-    return 'jiffit-classic-light'
-  }
-
-  if (value === 'jiffit-classic-midnight') {
-    return 'jiffit-classic-midnight'
-  }
-
-  if (value === 'light') {
-    return 'default'
+  if (value === 'classic' || value === 'jiffit-classic-dark' || value === 'jiffit-classic-midnight') {
+    return 'classic'
   }
 
   return 'dark'
 }
 
 const themeOptions: ThemeOption[] = [
-  { value: 'default', label: 'Default' },
+  { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
-  { value: 'midnight', label: 'Midnight' },
-  { value: 'jiffit-classic-light', label: 'Jiffit-Classic-light' },
-  { value: 'jiffit-classic-dark', label: 'Jiffit-Classic-Dark' },
-  { value: 'jiffit-classic-midnight', label: 'Jiffit-Classic-Midnight' },
+  { value: 'classic', label: 'Classic' },
 ]
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'dark',
+      theme: 'light',
       options: themeOptions,
       setTheme: (theme) => set({ theme }),
     }),
     {
       name: 'jiffit-dashboard-theme',
-      version: 3,
+      version: 4,
       migrate: (persistedState) => {
         const state = persistedState as { theme?: LegacyTheme } | undefined
 

@@ -24,6 +24,7 @@ import {
   updateBooking,
   updateBookingStatus,
 } from '../bookings.api'
+import { usePermissionHelpers } from '../../access/permissions'
 import type {
   BookingCustomer,
   BookingRecord,
@@ -42,6 +43,7 @@ const bookingStatuses: BookingStatus[] = [
   'PAID',
   'ASSIGNMENT_PENDING',
   'ASSIGNED',
+  'ACCEPTED',
   'IN_PROGRESS',
   'COMPLETED',
   'CANCELLED',
@@ -202,6 +204,7 @@ const getBookingFormFromRecord = (
 export const BookingsPage = () => {
   const [modal, modalContextHolder] = Modal.useModal()
   const queryClient = useQueryClient()
+  const permissions = usePermissionHelpers()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingBooking, setEditingBooking] = useState<BookingRecord | null>(null)
   const [viewingBooking, setViewingBooking] = useState<BookingRecord | null>(null)
@@ -213,6 +216,9 @@ export const BookingsPage = () => {
   const [statusFilter, setStatusFilter] = useState<BookingStatus | undefined>()
   const isBookingFormOpen = isCreateModalOpen || Boolean(editingBooking)
   const bookingFormMode: BookingFormMode = editingBooking ? 'edit' : 'create'
+  const canCreateBookings = permissions.canCreate('BOOKINGS')
+  const canUpdateBookings = permissions.canUpdate('BOOKINGS')
+  const canDeleteBookings = permissions.canDelete('BOOKINGS')
 
   const bookingsQuery = useQuery({
     queryKey: ['bookings'],
@@ -289,7 +295,7 @@ export const BookingsPage = () => {
     },
   })
 
-  const bookings = bookingsQuery.data ?? []
+  const bookings = useMemo(() => bookingsQuery.data ?? [], [bookingsQuery.data])
   const serviceLocations = locationsQuery.data ?? []
 
   const filteredBookings = useMemo(() => {
@@ -533,10 +539,12 @@ export const BookingsPage = () => {
             </p>
             <h2>All Bookings</h2>
           </div>
-          <button type="button" className="bookings-add-btn" onClick={openCreateModal}>
-            <Plus size={15} />
-            New Booking
-          </button>
+          {canCreateBookings ? (
+            <button type="button" className="bookings-add-btn" onClick={openCreateModal}>
+              <Plus size={15} />
+              New Booking
+            </button>
+          ) : null}
         </div>
 
         <div className="bookings-filters">
@@ -645,39 +653,45 @@ export const BookingsPage = () => {
                           <Eye size={14} />
                           View
                         </button>
-                        <button
-                          type="button"
-                          className="bookings-edit-btn"
-                          onClick={() => openEditModal(booking)}
-                          disabled={updateBookingMutation.isPending}
-                        >
-                          <Pencil size={14} />
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="bookings-status-btn confirm"
-                          onClick={() => changeBookingStatus(booking, 'CONFIRMED')}
-                          disabled={booking.bookingStatus === 'CONFIRMED' || updateStatusMutation.isPending}
-                        >
-                          Confirm
-                        </button>
-                        <button
-                          type="button"
-                          className="bookings-status-btn hold"
-                          onClick={() => changeBookingStatus(booking, 'HOLD')}
-                          disabled={booking.bookingStatus === 'HOLD' || updateStatusMutation.isPending}
-                        >
-                          Hold
-                        </button>
-                        <button
-                          type="button"
-                          className="bookings-status-btn cancel"
-                          onClick={() => changeBookingStatus(booking, 'CANCELLED')}
-                          disabled={booking.bookingStatus === 'CANCELLED' || updateStatusMutation.isPending}
-                        >
-                          Cancel
-                        </button>
+                        {canUpdateBookings ? (
+                          <>
+                            <button
+                              type="button"
+                              className="bookings-edit-btn"
+                              onClick={() => openEditModal(booking)}
+                              disabled={updateBookingMutation.isPending}
+                            >
+                              <Pencil size={14} />
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="bookings-status-btn confirm"
+                              onClick={() => changeBookingStatus(booking, 'CONFIRMED')}
+                              disabled={booking.bookingStatus === 'CONFIRMED' || updateStatusMutation.isPending}
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              type="button"
+                              className="bookings-status-btn hold"
+                              onClick={() => changeBookingStatus(booking, 'HOLD')}
+                              disabled={booking.bookingStatus === 'HOLD' || updateStatusMutation.isPending}
+                            >
+                              Hold
+                            </button>
+                          </>
+                        ) : null}
+                        {canDeleteBookings || canUpdateBookings ? (
+                          <button
+                            type="button"
+                            className="bookings-status-btn cancel"
+                            onClick={() => changeBookingStatus(booking, 'CANCELLED')}
+                            disabled={booking.bookingStatus === 'CANCELLED' || updateStatusMutation.isPending}
+                          >
+                            Cancel
+                          </button>
+                        ) : null}
                       </div>
                     </td>
                   </tr>
@@ -1055,10 +1069,12 @@ export const BookingsPage = () => {
               </div>
 
               <div className="bookings-modal-actions">
-                <button type="button" className="bookings-save-btn" onClick={() => openEditModal(viewingBooking)}>
-                  <Pencil size={14} />
-                  Edit Booking
-                </button>
+                {canUpdateBookings ? (
+                  <button type="button" className="bookings-save-btn" onClick={() => openEditModal(viewingBooking)}>
+                    <Pencil size={14} />
+                    Edit Booking
+                  </button>
+                ) : null}
                 <button type="button" className="employees-submit-btn" onClick={() => setViewingBooking(null)}>
                   Close
                 </button>
