@@ -1,5 +1,5 @@
 import { LoaderCircle, ShieldAlert } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { isCustomerUser, isSuperUser } from '../../features/access/permissions'
 import { bootstrapDashboardAccess } from '../../features/auth/auth.api'
@@ -7,25 +7,36 @@ import { useAuthStore } from '../../features/auth/auth.store'
 
 export const ProtectedRoute = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  const currentUser = useAuthStore((state) => state.user)
+  const accessToken = useAuthStore((state) => state.accessToken)
   const refreshToken = useAuthStore((state) => state.refreshToken)
   const setUser = useAuthStore((state) => state.setUser)
   const setAccessData = useAuthStore((state) => state.setAccessData)
   const logout = useAuthStore((state) => state.logout)
   const [isBootstrapping, setIsBootstrapping] = useState(false)
   const [blockedMessage, setBlockedMessage] = useState('')
+  const bootstrappedSessionRef = useRef<string | null>(null)
   const location = useLocation()
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !accessToken) {
+      bootstrappedSessionRef.current = null
+      return
+    }
+
+    const sessionKey = `${accessToken}:${refreshToken ?? 'legacy'}`
+
+    if (bootstrappedSessionRef.current === sessionKey) {
       return
     }
 
     let isMounted = true
 
     const bootstrap = async () => {
+      const currentUser = useAuthStore.getState().user
+
       if (currentUser && !refreshToken && isSuperUser(currentUser)) {
         setAccessData([], [])
+        bootstrappedSessionRef.current = sessionKey
         return
       }
 
@@ -46,6 +57,7 @@ export const ProtectedRoute = () => {
 
         setUser(profile)
         setAccessData(screens, permissions)
+        bootstrappedSessionRef.current = sessionKey
       } catch (error) {
         if (!isMounted) {
           return
@@ -65,7 +77,7 @@ export const ProtectedRoute = () => {
     return () => {
       isMounted = false
     }
-  }, [currentUser, isAuthenticated, logout, refreshToken, setAccessData, setUser])
+  }, [accessToken, isAuthenticated, logout, refreshToken, setAccessData, setUser])
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location.pathname, message: blockedMessage }} />

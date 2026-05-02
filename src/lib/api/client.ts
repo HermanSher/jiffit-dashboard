@@ -43,6 +43,7 @@ const requestFreshTokens = async (): Promise<AuthTokenPair | null> => {
   if (!refreshPromise) {
     refreshPromise = fetch(`${API_BASE_URL}/api/auth/refresh`, {
       method: 'POST',
+      cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -100,6 +101,7 @@ export const apiRequest = async <TData>(
   const send = () =>
     fetch(`${API_BASE_URL}${path}`, {
       ...init,
+      cache: init.cache ?? 'no-store',
       headers: (() => {
         const requestHeaders = buildHeaders(headers, init.body)
 
