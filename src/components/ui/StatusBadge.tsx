@@ -7,11 +7,11 @@ interface StatusBadgeProps {
 const resolveTone = (value: string): string => {
   const normalized = value.toUpperCase()
 
-  if (['ACTIVE', 'LIVE', 'AVAILABLE', 'PAID', 'COMPLETED', 'CONFIRMED', 'TRUE'].includes(normalized)) {
+  if (['ACTIVE', 'LIVE', 'AVAILABLE', 'PAID', 'COMPLETED', 'CONFIRMED', 'TRUE', 'VERIFIED'].includes(normalized)) {
     return 'success'
   }
 
-  if (['HOLD', 'PENDING', 'ASSIGNMENT_PENDING', 'ASSIGNED', 'AUTHORIZED'].includes(normalized)) {
+  if (['HOLD', 'PENDING', 'PENDING_HUB_VERIFICATION', 'ASSIGNMENT_PENDING', 'ASSIGNED', 'AUTHORIZED', 'RESUBMISSION_REQUIRED'].includes(normalized)) {
     return 'warning'
   }
 
@@ -23,8 +23,8 @@ const resolveTone = (value: string): string => {
 }
 
 export const StatusBadge = ({ value }: StatusBadgeProps) => {
-  const label =
-    typeof value === 'boolean' ? (value ? 'Active' : 'Inactive') : String(value ?? 'Unknown')
+  const rawLabel = typeof value === 'boolean' ? (value ? 'Active' : 'Inactive') : String(value ?? 'Unknown')
+  const label = rawLabel.toUpperCase() === 'DRAFT' ? 'Draft / Incomplete' : rawLabel
 
   return <span className={clsx('status-badge', resolveTone(label))}>{label.replace(/_/g, ' ')}</span>
 }

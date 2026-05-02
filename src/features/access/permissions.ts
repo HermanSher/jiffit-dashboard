@@ -104,6 +104,8 @@ export const usePermissionHelpers = () => {
       canDelete: (screenCode: string) => hasScreenAction(user, permissions, screenCode, 'DELETE'),
       canExport: (screenCode: string) => hasScreenAction(user, permissions, screenCode, 'EXPORT'),
       canAssign: (screenCode: string) => hasScreenAction(user, permissions, screenCode, 'ASSIGN'),
+      canVerify: (screenCode: string) => hasScreenAction(user, permissions, screenCode, 'VERIFY'),
+      canReject: (screenCode: string) => hasScreenAction(user, permissions, screenCode, 'REJECT'),
       canAccessScreen: (screenCode: string, routePath?: string) =>
         hasAnyScreenAccess(user, screens, permissions, screenCode, routePath),
     }),

@@ -16,4 +16,12 @@ export interface EffectivePermission {
   isAllowed: boolean
 }
 
-export type PermissionAction = 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'ASSIGN'
+export type PermissionAction =
+  | 'VIEW'
+  | 'CREATE'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'EXPORT'
+  | 'ASSIGN'
+  | 'VERIFY'
+  | 'REJECT'

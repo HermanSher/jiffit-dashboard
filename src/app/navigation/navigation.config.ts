@@ -4,6 +4,7 @@ import {
   Gauge,
   KeyRound,
   RadioTower,
+  ShieldCheck,
   Users,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -57,6 +58,14 @@ export const navigationItems: NavigationItem[] = [
     screenCode: 'DASHBOARD',
     permissionCodeBase: 'DASHBOARD',
     icon: RadioTower,
+    group: 'Operations',
+  },
+  {
+    to: '/hero-verifications',
+    label: 'Hero Verification',
+    screenCode: 'HERO_VERIFICATIONS',
+    permissionCodeBase: 'HERO_VERIFICATIONS',
+    icon: ShieldCheck,
     group: 'Operations',
   },
   {

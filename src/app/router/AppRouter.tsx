@@ -5,6 +5,7 @@ import { LoginPage } from '../../features/auth/pages/LoginPage'
 import { BookingsPage } from '../../features/bookings/pages/BookingsPage'
 import { DashboardPage } from '../../features/dashboard/pages/DashboardPage'
 import { EmployeesPage } from '../../features/employees/pages/EmployeesPage'
+import { HeroVerificationsPage } from '../../features/hero-verifications/pages/HeroVerificationsPage'
 import { MastersPage } from '../../features/masters/pages/MastersPage'
 import { resourceConfigs } from '../../features/resources/resource.config'
 import { ResourcePage } from '../../features/resources/pages/ResourcePage'
@@ -74,6 +75,14 @@ export const AppRouter = () => {
               element={
                 <PermissionRoute screenCode="DASHBOARD" routePath="/tracking">
                   <HeroLiveLocationsPage />
+                </PermissionRoute>
+              }
+            />
+            <Route
+              path="/hero-verifications"
+              element={
+                <PermissionRoute screenCode="HERO_VERIFICATIONS" routePath="/hero-verifications">
+                  <HeroVerificationsPage />
                 </PermissionRoute>
               }
             />
