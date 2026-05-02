@@ -391,6 +391,7 @@ export const HeroVerificationsPage = () => {
               <DetailItem label="Earnings Type" value={selected.earningsType} />
               <DetailItem label="Nearest Hub" value={selected.nearestHub?.name} />
               <DetailItem label="Hub Address" value={selected.nearestHub?.addressLine1} />
+              <DetailItem label="Created" value={formatDate(selected.createdAt)} />
               <DetailItem label="Submitted" value={formatDate(selected.submittedAt)} />
               <DetailItem label="Verified" value={formatDate(selected.verifiedAt)} />
               <DetailItem label="Rejection Reason" value={selected.rejectionReason} />

@@ -44,9 +44,9 @@ export interface HeroVerificationApplication {
   gender: string | null
   fatherName: string | null
   alternateMobileNumber: string | null
-  addressLine1: string
+  addressLine1: string | null
   addressLine2: string | null
-  city: string
+  city: string | null
   state: string | null
   pincode: string | null
   latitude: number | null
